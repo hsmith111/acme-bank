@@ -136,16 +136,22 @@ app.get("/download", function (request, response) {
 app.post("/download", function (request, response) {
   if (request.session.loggedin) {
     var file_name = request.body.file;
-
+    const root_directory = path.join(process.cwd(), "/history_files/", file_name);
+    const rootDir = "history_files/";
     response.statusCode = 200;
     response.setHeader("Content-Type", "text/html");
 
     // Change the filePath to current working directory using the "path" method
-    const filePath = "history_files/" + file_name;
+    const filePath = path.join("history_files/", file_name);
+    const fileName = path.normalize(filePath);
     console.log(filePath);
     try {
-      content = fs.readFileSync(filePath, "utf8");
-      response.end(content);
+      if (fileName.includes(rootDir)) {
+        content = fs.readFileSync(filePath, "utf8");
+        response.end(content);
+      } else {
+        response.end("File not found");
+      }
     } catch (err) {
       console.log(err);
       response.end("File not found");
