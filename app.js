@@ -4,6 +4,7 @@ const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
+const { check } = "express-validator";
 
 const db = new sqlite3.Database("./bank_sample.db");
 
@@ -171,7 +172,7 @@ app.get("/public_forum", function (request, response) {
 
 app.post("/public_forum", function (request, response) {
   if (request.session.loggedin) {
-    var comment = request.body.comment;
+    var comment = check('comment').notEmpty().escape();
     var username = request.session.username;
     if (comment) {
       db.all(
