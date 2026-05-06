@@ -4,7 +4,7 @@ const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
-const { check } = "express-validator";
+const { check } = require("express-validator");
 
 const db = new sqlite3.Database("./bank_sample.db");
 
@@ -176,7 +176,10 @@ app.post("/public_forum", function (request, response) {
     var username = request.session.username;
     if (comment) {
       db.all(
-        `INSERT INTO public_forum (username,message) VALUES ('${username}','${comment}')`,
+        "INSERT INTO public_forum (username,message) VALUES ($username, $comment)", {
+          $username: username,
+          $comment: comment,
+          },
         (err, rows) => {
           console.log(err);
         }
